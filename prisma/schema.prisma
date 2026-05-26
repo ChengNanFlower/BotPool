@@ -1,0 +1,97 @@
+// ---- 数据源：PostgreSQL ----
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---- Prisma Client 生成配置 ----
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ============================================================
+// 枚举
+// ============================================================
+
+/** 支持的 AI 服务商 */
+enum Provider {
+  DEEPSEEK
+  GLM
+  KIMI
+  QWEN
+  DOUBAO
+}
+
+/** 会话生命周期状态 */
+enum SessionStatus {
+  IDLE      // 未启动
+  ACTIVE    // 正在运行
+  STOPPED   // 已停止
+  ERROR     // 异常终止
+}
+
+/** 消息角色 */
+enum MessageRole {
+  SYSTEM
+  USER
+  ASSISTANT
+}
+
+// ============================================================
+// 模型
+// ============================================================
+
+/** Agent 配置 — 一个参与对话的 AI 角色 */
+model AgentProfile {
+  id           String        @id @default(uuid())
+  sortOrder    Int           // 排序序号，控制对话轮转顺序
+  displayName  String        // 前端展示名称
+  provider     Provider      // 所属服务商
+  modelName    String        // 具体模型名，如 "deepseek-v4-flash"
+  systemPrompt String        @default("") @db.Text  // 系统提示词（角色设定）
+  enabled      Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  messages     ChatMessage[]
+
+  @@index([sortOrder])
+}
+
+/** 聊天会话 — 一次完整的多人 AI 对话 */
+model ChatSession {
+  id         String        @id @default(uuid())
+  topic      String?       // 对话话题
+  status     SessionStatus @default(IDLE)
+  stopReason String?       // 停止原因：user_requested / max_rounds_reached
+  totalCost   Float         @default(0)   // 累计费用（美元）
+  roundCount Int           @default(0)   // 已完成轮次
+  startedAt  DateTime      @default(now())
+  endedAt    DateTime?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  messages   ChatMessage[]
+}
+
+/** 聊天消息 — 会话中的单条发言 */
+model ChatMessage {
+  id            String        @id @default(uuid())
+  sessionId     String
+  agentId       String?       // null 表示用户消息
+  role          MessageRole
+  content       String        @db.Text
+  sequenceNum   Int           // 全局递增序号，用于排序
+  roundNum      Int           @default(0)
+  promptTokens  Int           @default(0)
+  outputTokens  Int           @default(0)
+  cost          Float         @default(0)   // 本条消息费用
+  isError       Boolean       @default(false)
+  errorMessage  String?
+  createdAt     DateTime      @default(now())
+
+  // 关联
+  session  ChatSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  agent    AgentProfile? @relation(fields: [agentId], references: [id], onDelete: SetNull)
+
+  @@index([sessionId, sequenceNum])
+  @@index([sessionId])
+}
