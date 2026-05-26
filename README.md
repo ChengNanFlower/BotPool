@@ -54,7 +54,7 @@ npm run db:seed
 npm run dev
 ```
 
-打开 http://localhost:3000，在左侧管理 Agent，输入话题即可开始。
+打开 http://localhost:3000 ，在左侧管理 Agent，输入话题即可开始。
 
 ### Docker 部署
 
