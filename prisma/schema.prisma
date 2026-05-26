@@ -19,7 +19,6 @@ enum Provider {
   GLM
   KIMI
   QWEN
-  DOUBAO
 }
 
 /** 会话生命周期状态 */

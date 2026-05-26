@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Dialog } from "@/components/ui/Dialog";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
+import { PROVIDER_CONFIGS } from "@/lib/constants";
 import type { Agent } from "@/hooks/useAgents";
 
 // 服务商下拉选项
@@ -13,7 +14,6 @@ const PROVIDER_OPTIONS = [
   { value: "GLM", label: "GLM" },
   { value: "KIMI", label: "Kimi" },
   { value: "QWEN", label: "Qwen" },
-  { value: "DOUBAO", label: "豆包" },
 ];
 
 interface Props {
@@ -30,13 +30,18 @@ interface Props {
 
 /**
  * AgentFormDialog — Agent 新建/编辑弹窗
- * 包含显示名称、服务商、模型名、系统提示词字段
+ * 包含显示名称、服务商、模型名（根据服务商动态变化）、系统提示词字段
  */
 export function AgentFormDialog({ open, onClose, onSave, agent }: Props) {
   const [displayName, setDisplayName] = useState("");
   const [provider, setProvider] = useState("DEEPSEEK");
   const [modelName, setModelName] = useState("");
   const [systemPrompt, setSystemPrompt] = useState("");
+
+  // 根据当前服务商获取可选模型列表
+  const modelOptions = useMemo(() => {
+    return PROVIDER_CONFIGS[provider]?.models || [];
+  }, [provider]);
 
   // 弹窗打开时，根据 agent 是否为 null 判断新增/编辑模式
   useEffect(() => {
@@ -48,10 +53,18 @@ export function AgentFormDialog({ open, onClose, onSave, agent }: Props) {
     } else {
       setDisplayName("");
       setProvider("DEEPSEEK");
-      setModelName("");
+      setModelName(PROVIDER_CONFIGS["DEEPSEEK"].defaultModel);
       setSystemPrompt("");
     }
   }, [agent, open]);
+
+  // 服务商切换时，自动选中该服务商的默认模型
+  const handleProviderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newProvider = e.target.value;
+    setProvider(newProvider);
+    const defaultModel = PROVIDER_CONFIGS[newProvider]?.defaultModel || "";
+    setModelName(defaultModel);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,21 +97,19 @@ export function AgentFormDialog({ open, onClose, onSave, agent }: Props) {
           <Select
             options={PROVIDER_OPTIONS}
             value={provider}
-            onChange={(e) => setProvider(e.target.value)}
+            onChange={handleProviderChange}
           />
         </div>
 
-        {/* 模型名 */}
+        {/* 模型选择 — 根据服务商动态列出可选模型 */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1.5">
             模型名称
           </label>
-          <input
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          <Select
+            options={modelOptions}
             value={modelName}
             onChange={(e) => setModelName(e.target.value)}
-            required
-            placeholder="例如：deepseek-v4-pro"
           />
         </div>
 

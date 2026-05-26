@@ -25,12 +25,6 @@ const PROVIDERS = {
     apiKeyEnv: "QWEN_API_KEY",
     model: "qwen3.6-plus",
   },
-  doubao: {
-    name: "Doubao (豆包)",
-    baseURL: "https://ark.cn-beijing.volces.com/api/v3",
-    apiKeyEnv: "DOUBAO_API_KEY",
-    model: "doubao-seed-2-0-lite-260428",
-  },
 } as const;
 
 type TestResult = {

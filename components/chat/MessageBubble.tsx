@@ -14,7 +14,6 @@ const PROVIDER_COLORS: Record<string, string> = {
   GLM: "bg-purple-100 text-purple-800",
   KIMI: "bg-emerald-100 text-emerald-800",
   QWEN: "bg-orange-100 text-orange-800",
-  DOUBAO: "bg-rose-100 text-rose-800",
 };
 
 // 各服务商头像图标路径
@@ -23,7 +22,6 @@ const PROVIDER_ICONS: Record<string, string> = {
   GLM: "/icons/glm.png",
   KIMI: "/icons/kimi.png",
   QWEN: "/icons/qwen.png",
-  DOUBAO: "/icons/doubao.png",
 };
 
 /** Agent 头像组件（圆形图标，加载失败时隐藏） */

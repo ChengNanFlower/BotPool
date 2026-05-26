@@ -7,6 +7,7 @@ export interface ProviderConfig {
   baseURL: string;
   apiKeyEnv: string;            // 环境变量名，如 "DEEPSEEK_API_KEY"
   defaultModel: string;
+  models: { value: string; label: string }[];  // 可选模型列表
   contextWindow: number;         // 模型上下文窗口大小（tokens）
   pricing: { input: number; output: number }; // USD/百万tokens
   extraBody?: Record<string, unknown>;  // 请求时额外携带的 body 参数

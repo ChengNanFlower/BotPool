@@ -69,16 +69,23 @@ export async function* runRoundRobin(
       // 合并信号：session 被 stop 或 agent 被 skip 都会触发
       const combinedSignal = AbortSignal.any([sessionSignal, agentController.signal]);
 
-      // 读取当前会话的全部历史消息
+      // 读取当前会话的全部历史消息（含发言人信息）
       const messages = await prisma.chatMessage.findMany({
         where: { sessionId: session.id },
         orderBy: { sequenceNum: "asc" },
+        include: { agent: { select: { displayName: true } } },
       });
 
-      // 过滤空内容消息（错误残留），Kimi 会拒绝空 content
+      // 过滤空内容，为每条 AI 消息加上 [发言人] 前缀以区分身份
       const historyMessages = messages
         .filter((m) => m.content && m.content.trim().length > 0)
-        .map((m) => ({ role: mapRole(m.role), content: m.content }));
+        .map((m) => ({
+          role: mapRole(m.role),
+          content:
+            m.role === "ASSISTANT" && m.agent
+              ? `[${m.agent.displayName}]: ${m.content}`
+              : m.content,
+        }));
 
       // 构建上下文窗口（自动裁剪过长历史）
       const contextMessages = buildContextWindow(

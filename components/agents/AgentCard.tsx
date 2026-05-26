@@ -13,7 +13,6 @@ const PROVIDER_LABELS: Record<string, string> = {
   GLM: "GLM",
   KIMI: "Kimi",
   QWEN: "Qwen",
-  DOUBAO: "豆包",
 };
 
 /** AgentCard — Agent 列表中的单张卡片，显示名称、服务商标签和操作按钮 */

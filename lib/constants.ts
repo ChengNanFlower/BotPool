@@ -11,6 +11,10 @@ export const PROVIDER_CONFIGS: Record<string, ProviderConfig> = {
     baseURL: "https://api.deepseek.com",
     apiKeyEnv: "DEEPSEEK_API_KEY",
     defaultModel: "deepseek-v4-flash",
+    models: [
+      { value: "deepseek-v4-flash", label: "DeepSeek V4 Flash (快速)" },
+      { value: "deepseek-v4-pro", label: "DeepSeek V4 Pro (旗舰)" },
+    ],
     contextWindow: 1_000_000,
     pricing: { input: 0.14, output: 0.55 },
   },
@@ -20,9 +24,14 @@ export const PROVIDER_CONFIGS: Record<string, ProviderConfig> = {
     baseURL: "https://open.bigmodel.cn/api/paas/v4",
     apiKeyEnv: "GLM_API_KEY",
     defaultModel: "glm-5.1",
+    models: [
+      { value: "glm-5.1", label: "GLM 5.1 (最新)" },
+      { value: "glm-5.0", label: "GLM 5.0" },
+      { value: "glm-4.7", label: "GLM 4.7" },
+    ],
     contextWindow: 1_000_000,
     pricing: { input: 0.14, output: 0.14 },
-    extraBody: { thinking: { type: "disabled" } },  // 关闭思维链以节省 token
+    extraBody: { thinking: { type: "disabled" } },
   },
   KIMI: {
     id: "KIMI",
@@ -30,6 +39,10 @@ export const PROVIDER_CONFIGS: Record<string, ProviderConfig> = {
     baseURL: "https://api.moonshot.cn/v1",
     apiKeyEnv: "KIMI_API_KEY",
     defaultModel: "kimi-k2.6",
+    models: [
+      { value: "kimi-k2.6", label: "Kimi K2.6 (最新)" },
+      { value: "kimi-k2.5", label: "Kimi K2.5" },
+    ],
     contextWindow: 262_144,
     pricing: { input: 0.60, output: 0.60 },
     extraBody: { thinking: { type: "disabled" } },
@@ -40,17 +53,12 @@ export const PROVIDER_CONFIGS: Record<string, ProviderConfig> = {
     baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
     apiKeyEnv: "QWEN_API_KEY",
     defaultModel: "qwen3.6-plus",
+    models: [
+      { value: "qwen3.6-plus", label: "Qwen 3.6 Plus (均衡)" },
+      { value: "qwen3.6-turbo", label: "Qwen 3.6 Turbo (极速)" },
+    ],
     contextWindow: 131_072,
     pricing: { input: 0.11, output: 0.33 },
     extraBody: { enable_thinking: false },
-  },
-  DOUBAO: {
-    id: "DOUBAO",
-    displayName: "Doubao (豆包)",
-    baseURL: "https://ark.cn-beijing.volces.com/api/v3",
-    apiKeyEnv: "DOUBAO_API_KEY",
-    defaultModel: "doubao-seed-2-0-lite-260428",
-    contextWindow: 128_000,
-    pricing: { input: 0.11, output: 0.33 },
   },
 };
