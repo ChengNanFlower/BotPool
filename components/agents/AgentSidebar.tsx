@@ -29,12 +29,12 @@ interface Props {
 
 /**
  * AgentSidebar — 左侧 Agent 管理面板
- * 展示 Agent 列表、添加/编辑弹窗、上限提示（最多 5 个）
+ * 展示 Agent 列表、添加/编辑弹窗、上限提示（最多 4 个）
  */
 export function AgentSidebar({ agents, loading, onCreate, onUpdate, onDelete }: Props) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
-  const maxReached = agents.length >= 5;
+  const maxReached = agents.length >= 4;
 
   // 保存时根据是否有 editingAgent 判断是新增还是更新
   const handleSave = async (data: {
@@ -56,7 +56,7 @@ export function AgentSidebar({ agents, loading, onCreate, onUpdate, onDelete }: 
       {/* 顶部标题 + 添加按钮 */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
         <h2 className="text-sm font-semibold text-gray-700">
-          AI 角色 ({agents.length}/5)
+          AI 角色 ({agents.length}/4)
         </h2>
         <Button
           size="sm"

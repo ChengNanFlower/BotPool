@@ -4,7 +4,7 @@ import { Provider } from "@prisma/client";
 
 // 合法的 provider 值列表（由数据库枚举生成）
 const ALLOWED_PROVIDERS = Object.values(Provider);
-const MAX_AGENTS = 5;
+const MAX_AGENTS = 4;
 
 /**
  * GET /api/agents — 获取所有 Agent 列表（按 sortOrder 升序）
