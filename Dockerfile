@@ -20,7 +20,7 @@ COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/prisma ./prisma
 
 EXPOSE 3000
-CMD ["sh", "-c", "for i in 1 2 3 4 5; do npx prisma migrate deploy && break || sleep 3; done && node server.js"]
+CMD ["sh", "-c", "npx prisma db push --skip-generate && node server.js"]
 
 FROM base AS dev
 COPY package.json package-lock.json ./
@@ -28,4 +28,4 @@ COPY prisma/schema.prisma ./prisma/
 RUN npm ci
 RUN npx prisma generate
 COPY . .
-CMD ["sh", "-c", "npx prisma migrate deploy || true && npm run dev"]
+CMD ["sh", "-c", "npx prisma db push --skip-generate || true && npm run dev"]
