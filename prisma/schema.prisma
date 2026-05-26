@@ -85,6 +85,8 @@ model ChatMessage {
   cost          Float         @default(0)   // 本条消息费用
   isError       Boolean       @default(false)
   errorMessage  String?
+  agentDisplayName String?    // 消息创建时的 Agent 名称，防止 Agent 被删后丢失
+  agentProvider    String?    // 消息创建时的服务商标识，防止 Agent 被删后丢失
   createdAt     DateTime      @default(now())
 
   // 关联

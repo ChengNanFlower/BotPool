@@ -121,14 +121,15 @@ export function ChatView({ viewingSession, onCloseHistory }: Props) {
             messages={viewingSession.messages.map((m) => ({
               id: m.id,
               agentId: m.agentId,
-              displayName: m.agent?.displayName,
-              provider: m.agent?.provider,
+              displayName: m.agent?.displayName || (m as Record<string,unknown>).agentDisplayName as string,
+              provider: m.agent?.provider || (m as Record<string,unknown>).agentProvider as string,
               role: m.role as "user" | "assistant",
               content: m.content,
               sequenceNum: m.sequenceNum,
               roundNum: m.roundNum,
               isError: m.isError,
               cost: m.cost,
+              usage: m.cost != null ? { promptTokens: 0, outputTokens: 0, cost: m.cost } : undefined,
             }))}
           />
         </div>

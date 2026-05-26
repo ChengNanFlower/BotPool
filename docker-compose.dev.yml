@@ -1,0 +1,41 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://botpool:botpool@postgres:5432/botpool
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - GLM_API_KEY=${GLM_API_KEY}
+      - KIMI_API_KEY=${KIMI_API_KEY}
+      - QWEN_API_KEY=${QWEN_API_KEY}
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: botpool
+      POSTGRES_PASSWORD: botpool
+      POSTGRES_DB: botpool
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U botpool"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pgdata:

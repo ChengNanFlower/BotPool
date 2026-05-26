@@ -30,6 +30,8 @@ export interface SessionDetail {
     cost: number;
     isError: boolean;
     agent?: { id: string; displayName: string; provider: string };
+    agentDisplayName?: string | null;
+    agentProvider?: string | null;
   }[];
 }
 

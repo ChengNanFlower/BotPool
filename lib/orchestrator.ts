@@ -145,13 +145,13 @@ export async function* runRoundRobin(
 
         // 用户主动 stop — 保存部分内容然后退出
         if (sessionSignal.aborted) {
-          await savePartialMessage(session.id, agent.id, fullContent, seqNum, roundNum);
+          await savePartialMessage(session.id, agent, fullContent, seqNum, roundNum);
           break;
         }
 
         // 用户 skip — 保存部分内容，标记跳过，继续下一个 Agent
         if (agentController.signal.aborted) {
-          await savePartialMessage(session.id, agent.id, fullContent, seqNum, roundNum);
+          await savePartialMessage(session.id, agent, fullContent, seqNum, roundNum);
           seqNum++;
           yield {
             type: "agent_error",
@@ -182,6 +182,8 @@ export async function* runRoundRobin(
             promptTokens,
             outputTokens,
             cost,
+            agentDisplayName: agent.displayName,
+            agentProvider: agent.provider,
           },
         });
 
@@ -245,6 +247,8 @@ export async function* runRoundRobin(
             roundNum,
             isError: true,
             errorMessage: errMsg,
+            agentDisplayName: agent.displayName,
+            agentProvider: agent.provider,
           },
         });
         seqNum++;
@@ -392,7 +396,7 @@ function mapRole(role: MessageRole): string {
 /** 保存被中断（stop/skip）的 Agent 部分输出 */
 async function savePartialMessage(
   sessionId: string,
-  agentId: string,
+  agent: { id: string; displayName: string; provider: string },
   content: string,
   seqNum: number,
   roundNum: number,
@@ -400,12 +404,14 @@ async function savePartialMessage(
   await prisma.chatMessage.create({
     data: {
       sessionId,
-      agentId,
+      agentId: agent.id,
       role: "ASSISTANT",
       content,
       sequenceNum: seqNum,
       roundNum,
       isError: false,
+      agentDisplayName: agent.displayName,
+      agentProvider: agent.provider,
     },
   });
 }
